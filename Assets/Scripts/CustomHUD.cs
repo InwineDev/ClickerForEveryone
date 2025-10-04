@@ -1,47 +1,39 @@
 using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CustomHUD : MonoBehaviour
 {
-    public Button buttonHost;
     public Button buttonClient;
-    public InputField inputFieldAddress;
-    public InputField inputFieldPort;
+    public TMP_InputField inputFieldAddress;
+    public TMP_InputField inputFieldPort;
 
-    public void Start()
+    private void Start()
     {
-        buttonHost.onClick.AddListener(ButtonHost);
-        buttonClient.onClick.AddListener(ButtonClient);
+        buttonClient.onClick.AddListener(Client);
     }
 
-    public void ButtonHost()
+    public void Client()
     {
-        NetworkManager.singleton.StartHost();
-    }
-
-    public void ButtonClient()
-    {
-        // Установка IP-адреса и порта из полей ввода
-        NetworkManager.singleton.networkAddress = inputFieldAddress.text;
-
-        // Установка порта, если введено корректное значение
-        ushort port = 7777; // Стандартный порт по умолчанию
-        if (ushort.TryParse(inputFieldPort.text, out ushort parsedPort))
-        {
-            port = parsedPort;
-        }
+        NetworkManager.singleton.networkAddress = string.IsNullOrEmpty(inputFieldAddress.text) 
+            ? "localhost" 
+            : inputFieldAddress.text;
         
-        TelepathyTransport transport = NetworkManager.singleton.GetComponent<TelepathyTransport>();
-        if (transport != null)
-        {
-            transport.port = port;
-        }
-        else
-        {
-            Debug.LogError("Transport component not found! Make sure TelepathyTransport is attached to the NetworkManager.");
-        }
-
+        Port();
         NetworkManager.singleton.StartClient();
+    }
+
+    private void Port()
+    {
+        if (ushort.TryParse(inputFieldPort.text, out ushort port))
+        {
+            TelepathyTransport transport = NetworkManager.singleton.GetComponent<TelepathyTransport>();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        buttonClient.onClick.RemoveListener(Client);
     }
 }

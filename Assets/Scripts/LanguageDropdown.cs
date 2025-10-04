@@ -1,7 +1,5 @@
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Localization;
-using UnityEngine.Localization.Settings;
 
 public class LanguageDropdown : MonoBehaviour
 {
@@ -30,7 +28,6 @@ public class LanguageDropdown : MonoBehaviour
         if (savedLanguageIndex >= 0 && savedLanguageIndex < languages.Length)
         {
             languageDropdown.value = savedLanguageIndex;
-            SetLanguage(savedLanguageIndex);
         }
     }
 
@@ -38,12 +35,5 @@ public class LanguageDropdown : MonoBehaviour
     {
         PlayerPrefs.SetInt("SelectedLanguage", index);
         PlayerPrefs.Save();
-        SetLanguage(index);
-    }
-
-    private void SetLanguage(int index)
-    {
-        Locale selectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
-        LocalizationSettings.SelectedLocale = selectedLocale;
     }
 }
